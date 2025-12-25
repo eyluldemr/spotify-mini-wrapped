@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  spotifyId      String   @unique
+  email          String?
+  displayName    String?
+  profileImage   String?
+  accessToken    String
+  refreshToken   String
+  tokenExpiresAt DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  topArtists       TopArtist[]
+  topTracks        TopTrack[]
+  listeningHistory ListeningHistory[]
+}
+
+model TopArtist {
+  id         String    @id @default(cuid())
+  userId     String
+  spotifyId  String
+  name       String
+  imageUrl   String?
+  genres     String[]
+  popularity Int
+  timeRange  TimeRange
+  rank       Int
+  fetchedAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timeRange])
+}
+
+model TopTrack {
+  id         String    @id @default(cuid())
+  userId     String
+  spotifyId  String
+  name       String
+  artistName String
+  albumName  String
+  albumImage String?
+  previewUrl String?
+  durationMs Int?
+  timeRange  TimeRange
+  rank       Int
+  fetchedAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, timeRange])
+}
+
+model ListeningHistory {
+  id         String   @id @default(cuid())
+  userId     String
+  trackId    String
+  trackName  String
+  artistName String
+  albumImage String?
+  playedAt   DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, playedAt])
+}
+
+enum TimeRange {
+  SHORT_TERM  // Last 4 weeks
+  MEDIUM_TERM // Last 6 months
+  LONG_TERM   // All time
+}
