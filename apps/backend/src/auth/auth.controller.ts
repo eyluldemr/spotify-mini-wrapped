@@ -30,14 +30,14 @@ export class AuthController {
         // Set JWT as HTTP-only cookie
         res.cookie('auth_token', jwt, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: true,
+            sameSite: 'none',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
 
-        // Redirect to frontend dashboard
-        const frontendUrl = this.configService.get('FRONTEND_URL');
-        res.redirect(`${frontendUrl}/dashboard`);
+        // Redirect to frontend dashboard with token in URL as fallback
+        const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:3000';
+        res.redirect(`${frontendUrl}/dashboard?token=${jwt}`);
     }
 
     @Get('me')

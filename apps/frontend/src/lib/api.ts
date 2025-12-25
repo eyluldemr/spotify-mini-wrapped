@@ -1,16 +1,40 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
+export function getToken(): string | null {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem('auth_token');
+}
+
+export function setToken(token: string): void {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('auth_token', token);
+    }
+}
+
+export function clearToken(): void {
+    if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth_token');
+    }
+}
+
 export async function fetchApi<T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<T> {
+    const token = getToken();
+    const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        ...(options.headers as Record<string, string>),
+    };
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-        },
+        headers,
     });
 
     if (!response.ok) {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
     RefreshCw,
@@ -20,7 +21,9 @@ import {
     GenreDistribution,
     DashboardStats,
     TimeRange,
-    TIME_RANGE_LABELS
+    TIME_RANGE_LABELS,
+    setToken,
+    clearToken
 } from '@/lib/api';
 import TopArtistsCard from '@/components/TopArtistsCard';
 import TopTracksCard from '@/components/TopTracksCard';
@@ -29,6 +32,8 @@ import StatsCard from '@/components/StatsCard';
 import ShareCard from '@/components/ShareCard';
 
 export default function DashboardPage() {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -43,8 +48,13 @@ export default function DashboardPage() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     useEffect(() => {
+        const token = searchParams.get('token');
+        if (token) {
+            setToken(token);
+            router.replace('/dashboard');
+        }
         loadUser();
-    }, []);
+    }, [searchParams, router]);
 
     useEffect(() => {
         if (user) {
@@ -57,7 +67,7 @@ export default function DashboardPage() {
             const userData = await api.getMe();
             setUser(userData);
         } catch (error) {
-            // Redirect to login if not authenticated
+            clearToken();
             window.location.href = '/';
         } finally {
             setLoading(false);
