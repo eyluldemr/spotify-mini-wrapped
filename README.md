@@ -1,84 +1,122 @@
-# Spotify Mini Wrapped 🎵
+# 🎵 Spotify Mini Wrapped
 
-Kişisel Spotify dinleme istatistiklerini gösteren modern bir dashboard uygulaması.
+Your personal Spotify listening statistics, anytime. Discover your top artists, tracks, and musical journey without waiting for December!
 
-## Özellikler
+![Mini Wrapped Dashboard](docs/screenshots/dashboard.png)
 
-- 🔐 Spotify OAuth 2.0 ile güvenli giriş
-- 🎤 Top Artists (4 hafta / 6 ay / tüm zamanlar)
-- 🎵 Top Tracks (4 hafta / 6 ay / tüm zamanlar)
-- 📊 Genre dağılımı analizi
-- 🆕 Bu ay keşiflerim
-- 🔄 Otomatik veri güncelleme (background jobs)
-- ⚡ Redis cache ile hızlı yanıtlar
+## ✨ Features
 
-## Tech Stack
+- **🎤 Top Artists & Tracks** - See who you've been listening to the most
+- **📊 Genre Analysis** - Discover your musical taste through detailed genre breakdown
+- **🔍 Monthly Discoveries** - Find tracks you discovered in the last 30 days
+- **⏱️ Time Range Filters** - View stats for last 4 weeks, 6 months, or all time
+- **📤 Share Card** - Generate beautiful shareable images of your stats
+- **🎶 Create Playlist** - Turn your top tracks into a Spotify playlist
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Next.js 14 + TypeScript + TailwindCSS |
-| Backend | NestJS + TypeScript |
-| Database | PostgreSQL + Prisma |
-| Cache | Redis |
-| Queue | Bull |
+## 📸 Screenshots
 
-## Kurulum
+<table>
+  <tr>
+    <td><img src="docs/screenshots/login.png" alt="Login" width="250"/></td>
+    <td><img src="docs/screenshots/dashboard.png" alt="Dashboard" width="250"/></td>
+    <td><img src="docs/screenshots/tracks.png" alt="Top Tracks" width="250"/></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Login Page</b></td>
+    <td align="center"><b>Dashboard</b></td>
+    <td align="center"><b>Top Tracks</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/discoveries.png" alt="Discoveries" width="250"/></td>
+    <td><img src="docs/screenshots/genres.png" alt="Genres" width="250"/></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Monthly Discoveries</b></td>
+    <td align="center"><b>Genre Analysis</b></td>
+    <td></td>
+  </tr>
+</table>
 
-### 1. Prerequisites
+## 🛠️ Tech Stack
 
+### Backend
+- **NestJS** - Node.js framework
+- **PostgreSQL** - Database
+- **Prisma** - ORM
+- **Passport.js** - Spotify OAuth authentication
+- **JWT** - Token-based authentication
+
+### Frontend
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **html2canvas** - Image generation
+
+## 🚀 Live Demo
+
+**[Try it now →](https://spotify-mini-wrapped.vercel.app)**
+
+## 📦 Installation
+
+### Prerequisites
 - Node.js 18+
-- Docker & Docker Compose
+- PostgreSQL database
 - Spotify Developer Account
 
-### 2. Spotify Developer Setup
-
-1. [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)'a git
-2. Yeni bir uygulama oluştur
-3. Client ID ve Client Secret'ı kopyala
-4. Redirect URI ekle: `http://localhost:3000/api/auth/callback/spotify`
-
-### 3. Installation
-
+### 1. Clone the repository
 ```bash
-# Clone repo
-git clone <repo-url>
+git clone https://github.com/eyluldemr/spotify-mini-wrapped.git
 cd spotify-mini-wrapped
+```
 
-# Install dependencies
+### 2. Backend Setup
+```bash
+cd apps/backend
 npm install
+cp .env.example .env
+# Edit .env with your credentials
+npx prisma migrate dev
+npm run start:dev
+```
 
-# Start PostgreSQL & Redis
-docker-compose up -d
-
-# Setup environment files
-cp apps/backend/.env.example apps/backend/.env
-cp apps/frontend/.env.example apps/frontend/.env
-# Edit .env files with your Spotify credentials
-
-# Run database migrations
-cd apps/backend && npx prisma migrate dev
-
-# Start development servers
+### 3. Frontend Setup
+```bash
+cd apps/frontend
+npm install
+cp .env.example .env.local
+# Edit .env.local with your API URL
 npm run dev
 ```
 
-### 4. Access
+### Environment Variables
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:4000
-- API Docs: http://localhost:4000/api/docs
-
-## Project Structure
-
-```
-spotify-mini-wrapped/
-├── apps/
-│   ├── backend/        # NestJS API
-│   └── frontend/       # Next.js Dashboard
-├── docker-compose.yml  # PostgreSQL + Redis
-└── package.json        # Monorepo root
+**Backend (.env)**
+```env
+DATABASE_URL=postgresql://user:pass@localhost:5432/spotify_wrapped
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_CALLBACK_URL=http://localhost:4000/auth/spotify/callback
+JWT_SECRET=your_jwt_secret
+FRONTEND_URL=http://localhost:3000
 ```
 
-## License
+**Frontend (.env.local)**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
 
-MIT
+## 🎯 Spotify Developer Setup
+
+1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Create a new application
+3. Add `http://localhost:4000/auth/spotify/callback` to Redirect URIs
+4. Copy Client ID and Client Secret to your `.env` file
+
+## 📝 License
+
+MIT License - feel free to use this project for your portfolio!
+
+## 👤 Author
+
+Made with ❤️ by [Eylül Demir](https://github.com/eyluldemr)
