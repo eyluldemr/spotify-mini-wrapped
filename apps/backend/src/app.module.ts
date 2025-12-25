@@ -8,28 +8,31 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { JobsModule } from './jobs/jobs.module';
 
-@Module({
-    imports: [
-        // Config
-        ConfigModule.forRoot({
-            isGlobal: true,
-        }),
+const imports = [
+    ConfigModule.forRoot({
+        isGlobal: true,
+    }),
+    PrismaModule,
+    AuthModule,
+    UsersModule,
+    SpotifyModule,
+    AnalyticsModule,
+];
 
-        // Bull Queue
+if (process.env.REDIS_HOST) {
+    imports.push(
         BullModule.forRoot({
             redis: {
-                host: process.env.REDIS_HOST || 'localhost',
+                host: process.env.REDIS_HOST,
                 port: parseInt(process.env.REDIS_PORT || '6379'),
             },
-        }),
+        }) as any,
+        JobsModule as any,
+    );
+}
 
-        // Feature modules
-        PrismaModule,
-        AuthModule,
-        UsersModule,
-        SpotifyModule,
-        AnalyticsModule,
-        JobsModule,
-    ],
+@Module({
+    imports,
 })
 export class AppModule { }
+
